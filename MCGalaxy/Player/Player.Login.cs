@@ -22,6 +22,7 @@ using MCGalaxy.Games;
 using MCGalaxy.SQL;
 using MCGalaxy.Tasks;
 using MCGalaxy.Util;
+using MCGalaxy.Network;
 
 namespace MCGalaxy 
 {
@@ -254,6 +255,7 @@ namespace MCGalaxy
             
             // Server host is exempt from alt listing
             if (IPAddress.IsLoopback(p.IP)) return;
+            if (!Server.Config.VerifyLanIPs && IPUtil.IsPrivate(p.IP)) return;
             
             List<string> alts = PlayerInfo.FindAccounts(p.ip);
             // in older versions it was possible for your name to appear multiple times in DB
