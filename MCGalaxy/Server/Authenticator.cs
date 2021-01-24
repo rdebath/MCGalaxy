@@ -36,7 +36,7 @@ namespace MCGalaxy {
             string calculated = Server.CalcMppass(p.truename);
             
             if (!mppass.CaselessEq(calculated)) {
-                if (!IPUtil.IsPrivate(p.IP)) return false;
+                if (!IPUtil.IsPrivate(p.IP) || Server.Config.VerifyPrivateIP) return false;
             } else {
                 p.verifiedName = true;
             }

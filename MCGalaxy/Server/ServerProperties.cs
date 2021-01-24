@@ -151,6 +151,7 @@ namespace MCGalaxy {
             w.WriteLine("#   motd                          = The message which displays when a player connects");
             w.WriteLine("#   port                          = The port to operate from");
             w.WriteLine("#   verify-names                  = Verify the validity of names");
+            w.WriteLine("#   verify-privateip              = Verify the validity of names on private IPs too");
             w.WriteLine("#   public                        = Set to true to appear in the public server list");
             w.WriteLine("#   max-players                   = The maximum number of connections");
             w.WriteLine("#   max-guests                    = The maximum number of guests allowed");

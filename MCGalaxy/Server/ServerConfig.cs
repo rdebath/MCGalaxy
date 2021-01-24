@@ -44,6 +44,8 @@ namespace MCGalaxy {
         public bool WebClient = true;
         [ConfigString("default-rank", "Server", "guest")]
         public string DefaultRankName = "guest";
+        [ConfigBool("verify-privateip", "Server", false)]
+        public bool VerifyPrivateIP = false;
         
         [ConfigBool("autoload", "Level", true)]
         public bool AutoLoadMaps = true;        
