@@ -94,6 +94,13 @@ namespace MCGalaxy.Blocks {
                 BlockID oDoorOpposite = p.level.Props[old].oDoorBlock;
                 p.level.Blockchange(x, y, z, oDoorOpposite);
                 return ChangeResult.Modified;
+            } else {
+                BlockID oDoorOpposite = p.level.Props[old].oDoorBlock;
+                BlockID oDoorMaybeSelf = p.level.Props[oDoorOpposite].oDoorBlock;
+                if (oDoorMaybeSelf != old || Block.IsPhysicsType(oDoorOpposite))
+                    return ChangeResult.Unchanged;
+                p.level.Blockchange(x, y, z, oDoorOpposite);
+                return ChangeResult.Modified;
             }
             return ChangeResult.Unchanged;
         }
