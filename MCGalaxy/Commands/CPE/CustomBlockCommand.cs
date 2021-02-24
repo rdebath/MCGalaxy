@@ -159,6 +159,7 @@ namespace MCGalaxy.Commands.CPE
                 if (!DoCopy(p, args, true, srcDefs[i], b, b)) continue;
                 copied++;
                 
+                if (!p.Ignores.BlockdefChanges)
                 p.Message("Copied the {0} custom block with id \"{1}\".", args.scope, Block.ToRaw(b));
             }
             
@@ -194,6 +195,7 @@ namespace MCGalaxy.Commands.CPE
                 BlockID src = Block.FromRaw((BlockID)i);
                 if (!DoCopy(p, args, false, srcDefs[src], src, dst)) continue;
                 
+                if (!p.Ignores.BlockdefChanges)
                 p.Message("Duplicated the {0} custom block with id \"{1}\" to \"{2}\".", 
                           args.scope, i, Block.ToRaw(dst));
                 changed = true;
@@ -301,7 +303,6 @@ namespace MCGalaxy.Commands.CPE
         static void PrintBlock(Player p, BlockDefinition def) {
             p.Message("Custom block &T{0} &Shas name &T{1}", def.RawID, def.Name);
         }
-
         
         static void RemoveHandler(Player p, string[] parts, BlockDefinitionsArgs args) {
             if (parts.Length <= 1) { Help(p, args.cmd); return; }
@@ -552,6 +553,7 @@ namespace MCGalaxy.Commands.CPE
                     
                     def.InventoryOrder = order == def.RawID ? -1 : order;
                     BlockDefinition.UpdateOrder(def, args.global, args.level);
+                    if (!p.Ignores.BlockdefChanges)
                     p.Message("Set inventory order for {0} to {1}", blockName,
                                    order == def.RawID ? "default" : order.ToString());
                     return true;
@@ -575,6 +577,7 @@ namespace MCGalaxy.Commands.CPE
                     p.Message("Unrecognised property: " + arg); return false;
             }
             
+            if (!p.Ignores.BlockdefChanges)
             p.Message("Set {0} for {1} to {2}", arg, blockName, value);
             BlockDefinition.Add(def, args.defs, args.level);
             if (changedFallback) {

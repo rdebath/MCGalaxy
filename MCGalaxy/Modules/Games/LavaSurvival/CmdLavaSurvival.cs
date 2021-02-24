@@ -83,7 +83,8 @@ namespace MCGalaxy.Modules.Games.LS
                 p.MakeSelection(1, cfg, SetFloodPos);
                 return;
             } else if (prop.CaselessEq("safe")) {
-                p.Message("Place or break two blocks to determine the edges.");
+                if (!p.Ignores.DrawOutput || !p.Supports(CpeExt.MessageTypes))
+                    p.Message("Place or break two blocks to determine the edges.");
                 p.MakeSelection(2, cfg, SetSafeZone);
                 return;
             }

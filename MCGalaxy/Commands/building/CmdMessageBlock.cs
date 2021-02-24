@@ -59,8 +59,9 @@ namespace MCGalaxy.Commands.Building {
             bool allCmds = HasExtraPerm(p, data.Rank, 1);
             if (!MessageBlock.Validate(p, mbArgs.Message, allCmds)) return;
 
-            p.Message("Place where you wish the message block to go.");
-            p.MakeSelection(1, mbArgs, PlacedMark);
+            if (!p.Ignores.DrawOutput || !p.Supports(CpeExt.MessageTypes))
+                p.Message("Place where you wish the message block to go.");
+            p.MakeSelection(1, "Selecting location for &Smessage block.", mbArgs, PlacedMark);
         }
         
         BlockID GetBlock(Player p, string name, ref bool allMessage) {
