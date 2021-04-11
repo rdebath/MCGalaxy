@@ -48,6 +48,17 @@ namespace MCGalaxy.Core {
             p.group = Group.GroupIn(p.name);
             if (!CheckBanned(p)) return false;
             if (!CheckPlayersCount(p)) return false;
+
+            if (!Server.Config.VerifyNames && mppass != "") {
+                if (Server.Config.verifyadmins && p.Rank >= Server.Config.VerifyAdminsRank) {
+                    if (Commands.Moderation.CmdPass.HasPassword(p.truename)) {
+                        p.passtries--; // Reconnection is expensive, don't count this try.
+                        p.Unverified = true; // During early login this flag is wrong
+                        Commands.Moderation.CmdPass.VerifyPassword(p, mppass.Trim());
+                    }
+                }
+            }
+
             return true;
         }
         

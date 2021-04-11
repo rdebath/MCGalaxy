@@ -61,7 +61,7 @@ namespace MCGalaxy.Commands.Moderation {
             File.WriteAllBytes(NewHashPath(name), hash);
         }
         
-        static void VerifyPassword(Player p, string password) {
+        internal static void VerifyPassword(Player p, string password) {
             if (!p.Unverified) { p.Message("&WYou are already verified."); return; }
             if (p.passtries >= 3) { p.Kick("Did you really think you could keep on guessing?"); return; }
             if (password.IndexOf(' ') >= 0) { p.Message("Your password must be &Wone &Sword!"); return; }
