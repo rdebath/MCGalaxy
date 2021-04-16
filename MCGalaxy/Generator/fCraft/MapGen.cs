@@ -425,18 +425,96 @@ namespace MCGalaxy.Generator.fCraft {
         
         static bool Gen(Player p, Level lvl, string seed, MapGenTheme theme) {
             MapGenBiome biome = MapGenBiome.Forest;
-            if (seed.Length > 0 && !CommandParser.GetEnum(p, seed, "Seed", ref biome)) return false;
             fCraftMapGenArgs args = fCraftMapGenArgs.MakeTemplate(theme);
             
             float ratio = lvl.Height / 96.0f;
             args.MaxHeight    = (int)Math.Round(args.MaxHeight    * ratio);
             args.MaxDepth     = (int)Math.Round(args.MaxDepth     * ratio);
             args.SnowAltitude = (int)Math.Round(args.SnowAltitude * ratio);
-            
+            args.WaterLevel = (lvl.Height - 1) / 2;
+
+            string[] seedparts = seed.Split(',');
+            if (seedparts.Length>1)
+                seed = seedparts[0];
+            if (seed.Length > 0 && !CommandParser.GetEnum(p, seed, "Biome", ref biome)) return false;
+
             args.Biome      = biome;
             args.AddTrees   = biome == MapGenBiome.Forest;
             args.AddWater   = biome != MapGenBiome.Desert;
-            args.WaterLevel = (lvl.Height - 1) / 2;
+
+            int ar;
+            char[] equals_chararray = new char[] {'='};
+            for(ar=1; ar<seedparts.Length; ar++)
+            {
+                string[] arg = (seedparts[ar]).Split(equals_chararray,2);
+                if (arg.Length != 2) arg = new string[2]{arg[0], "1"};
+                switch(arg[0].ToLower()) {
+                case "s":
+                case "seed":
+                    if (!Int32.TryParse(arg[1], out args.Seed)) {
+                        p.Message("&W\"{0}\" is not a valid integer Seed.", arg[1]);
+                        return false;
+                    }
+                    break;
+                case "w":
+                case "water":
+                    if (!CommandParser.GetBool(p, arg[1], ref args.AddWater))
+                        return false;
+                    break;
+                case "wc":
+                case "watercoverage":
+                    if (!CommandParser.GetReal(p, arg[1], "WaterCoverage", ref args.WaterCoverage, 0.0f, 1.0f))
+                    args.AddWater = true;
+                    args.MatchWaterCoverage = true;
+                    break;
+                case "t":
+                case "tree": case "trees":
+                    if (!CommandParser.GetBool(p, arg[1], ref args.AddTrees))
+                        return false;
+                    break;
+                case "sn":
+                case "snow":
+                    if (!CommandParser.GetBool(p, arg[1], ref args.AddSnow))
+                        return false;
+                    break;
+                case "sl":
+                case "snowlevel":
+                case "snowaltitude":
+                    if (!CommandParser.GetInt(p, arg[1], "SnowAltitude", ref args.SnowAltitude, 0, lvl.Height - 1))
+                        return false;
+                    args.AddSnow = true;
+                    break;
+
+                case "tsl":
+                case "treespacingmin":
+                    if (!CommandParser.GetInt(p, arg[1], "TreeSpacingMin", ref args.TreeSpacingMin, 0))
+                        return false;
+                    args.AddTrees = true;
+                    break;
+                case "tsh":
+                case "treespacingmax":
+                    if (!CommandParser.GetInt(p, arg[1], "TreeSpacingMax", ref args.TreeSpacingMax, 0))
+                        return false;
+                    args.AddTrees = true;
+                    break;
+                case "thl":
+                case "treeheightmin":
+                    if (!CommandParser.GetInt(p, arg[1], "TreeHeightMin", ref args.TreeHeightMin, 0))
+                        return false;
+                    args.AddTrees = true;
+                    break;
+                case "thh":
+                case "treeheightmax":
+                    if (!CommandParser.GetInt(p, arg[1], "TreeHeightMax", ref args.TreeHeightMax, 0))
+                        return false;
+                    args.AddTrees = true;
+                    break;
+
+                default:
+                    p.Message("&WSeed option\"{0}\" is unknown.", arg[0]);
+                    return false;
+                }
+            }
 
             new fCraftMapGen(args).Generate(lvl);
             return true;
