@@ -98,6 +98,7 @@ namespace MCGalaxy.Network {
             	} catch (Exception ex) {
                     HttpUtil.DisposeErrorResponse(ex);
                     lastEx = ex;
+                    Thread.Sleep(3042);
                     continue;
                 }
             }
