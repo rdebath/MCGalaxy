@@ -91,7 +91,7 @@ namespace MCGalaxy.Blocks.Physics {
                     if (!lvl.Props[block].LavaKills) break;
                     
                     if (lvl.physics > 1 && !lvl.CheckSpongeLava(x, y, z)) {
-                        lvl.AddUpdate(index, Block.Air, default(PhysicsArgs));
+                        lvl.AddUpdate(index, Block.Fire, default(PhysicsArgs));
                     }
                     break;
             }
