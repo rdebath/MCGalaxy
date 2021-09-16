@@ -692,7 +692,18 @@ namespace MCGalaxy
                 Message(e.GetType() + ": " + e.Message);
                 return false;
             }
-            if (spamChecker != null && spamChecker.CheckCommandSpam()) return false;
+            if (spamChecker != null) {
+                if (data.Context == CommandContext.MessageBlock) {
+                    int ms = spamChecker.ReadCommandSpam();
+                    if (ms>10) Thread.Sleep(ms);
+
+                    // If commands are blocked abort.
+                    TimeSpan delta = cmdUnblocked - DateTime.UtcNow;
+                    if (delta.TotalSeconds > 0)
+                        return false;
+                } else
+                    if (spamChecker.CheckCommandSpam()) return false;
+            }
             return true;
         }
         

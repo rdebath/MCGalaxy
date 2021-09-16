@@ -83,5 +83,30 @@ namespace MCGalaxy {
                 return true;
             }
         }
+
+        public int ReadCommandSpam() {
+            if (!Server.Config.CmdSpamCheck || p.IsSuper) return 0;
+
+            lock (cmdLock) {
+                // Filling up the list.
+                if (cmdLog.Count < Server.Config.CmdSpamCount - 2 || cmdLog.Count < 4) {
+                    if (cmdLog.AddSpamEntry(Server.Config.CmdSpamCount, Server.Config.CmdSpamInterval))
+                        return (int)(Server.Config.CmdSpamInterval.TotalMilliseconds / Server.Config.CmdSpamCount);
+
+                    return (int)(Server.Config.CmdSpamInterval.TotalMilliseconds / Server.Config.CmdSpamCount * 2);
+                }
+
+                cmdLog.AddSpamEntry(Server.Config.CmdSpamCount, Server.Config.CmdSpamInterval);
+
+                DateTime next = DateTime.UtcNow - Server.Config.CmdSpamInterval -
+                    TimeSpan.FromMilliseconds(Server.Config.CmdSpamInterval.TotalMilliseconds / Server.Config.CmdSpamCount * 2);
+
+                if (cmdLog[0] < next && cmdLog[1] < next)
+                    return 0;
+
+                return (int)(Server.Config.CmdSpamInterval.TotalMilliseconds / Server.Config.CmdSpamCount * 2);
+            }
+        }
+
     }
 }
