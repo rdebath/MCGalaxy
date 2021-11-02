@@ -373,29 +373,34 @@ namespace MCGalaxy
             return lvl;
         }
         
+        static readonly object museum_lock = new object();
+
         static Level GetMuseum(string name, string path) {
             Player[] players = PlayerInfo.Online.Items;            
             // Since museums are essentially readonly anyways, try to reuse
             //  blocks/CustomBlocks from existing museum to reduce memory usage
-            foreach (Player pl in players)
-            {
-                Level lvl = pl.level;
-                if (!lvl.IsMuseum || lvl.name != name) continue;
+            // Lock the search and import so this happens even when
+            //  connections occur in quick succession.
+            lock (museum_lock) {
+                foreach (Player pl in players)
+                {
+                    Level lvl = pl.level;
+                    if (!lvl.IsMuseum || lvl.name != name) continue;
+                    
+                    Level clone        = new Level();
+                    clone.blocks       = lvl.blocks;
+                    clone.CustomBlocks = lvl.CustomBlocks;
+                    
+                    // Just in case museum was unloaded a split second before
+                    if (clone.blocks == null || clone.CustomBlocks == null) break;
+                    
+                    clone.Init(name, lvl.Width, lvl.Height, lvl.Length);
+                    return clone;
+                }
                 
-                Level clone        = new Level();
-                clone.blocks       = lvl.blocks;
-                clone.CustomBlocks = lvl.CustomBlocks;
-                
-                // Just in case museum was unloaded a split second before
-                if (clone.blocks == null || clone.CustomBlocks == null) break;
-                
-                clone.Init(name, lvl.Width, lvl.Height, lvl.Length);
-                return clone;
+                return IMapImporter.Decode(path, name, false);
             }
-            
-            return IMapImporter.Decode(path, name, false);
         }
-        
         
         public static void Resize(ref Level lvl, int width, int height, int length) {
             Level res = new Level(lvl.name, (ushort)width, (ushort)height, (ushort)length);
