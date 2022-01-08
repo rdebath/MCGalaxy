@@ -72,7 +72,7 @@ namespace MCGalaxy
                 
                 // Remove clone from list (hold lock for as short time as possible)
                 //  NOTE: check 'Server.Config.VerifyNames' too for LAN/localhost IPs
-                if (clone != null && (verifiedName || Server.Config.VerifyNames)) 
+                if (clone != null && clone != this && (verifiedName || Server.Config.VerifyNames)) 
                     PlayerInfo.Online.Remove(clone);
 
                 id = NextFreeId();
