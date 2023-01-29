@@ -253,7 +253,7 @@ namespace MCGalaxy {
         public bool AddUpdate(int index, BlockID block, bool overRide = false) {
             PhysicsArgs args = default(PhysicsArgs);
             args.Raw |= (uint)(PhysicsArgs.ExtBit * (block >> Block.ExtendedShift));
-            return AddUpdate(index, block, args, overRide);
+            return AddUpdate(index, (byte)block, args, overRide);
         }
         
         /// <summary> Adds the given entry to the list of updates to be applied at the end of the current physics tick </summary>
@@ -282,7 +282,10 @@ namespace MCGalaxy {
                     return false;
                 }
                 
-                data.Data = (byte)block;
+                if ((byte)block != block)
+                    data.Data = Block.CoalOre;
+                else
+                    data.Data = (byte)block;
                 Update update; update.Index = index; update.data = data;
                 ListUpdate.Add(update);
                 
