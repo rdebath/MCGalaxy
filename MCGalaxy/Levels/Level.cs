@@ -236,16 +236,57 @@ namespace MCGalaxy
         
         void SaveCore(string path) {
             if (blocks == null) return;
-            if (File.Exists(path)) {
-                string prevPath = Paths.PrevMapFile(name);
-                if (File.Exists(prevPath)) File.Delete(prevPath);
-                File.Copy(path, prevPath, true);
-                File.Delete(path);
-            }
-            
+
+            // The aim here is that no issue upto and including a system crash
+            // will leave this in an inconsistent state. Because of the layout
+            // using multiple files this is not completely possible, however,
+            // common issues such as out of space and a killed process can be
+            // mostly accomodated.
+
+            // (1)
+            // Start long job to overwrite the backup file (out of space should happen here)
+            // On out of space or crash the primary level files will be untouched.
+
+            // (2)
+            // All three files usable and primary files are untouched so it's safe to remove old prev.
+
+            // (3)
+            // File.Replace move the backup to the primary and creates prev.
+            // This should not need any free space, but the previous delete freed up sufficient anyway.
+            // This operation is the first to touch the primary level file.
+            // EXCEPT, if the primary file doesn't exist it chokes! So use
+            // File.Move in that case (This would be a race).
+
+            // Beware: on mono this is two atomic renames. (or link and rename ??)
+
+            // Windows is supposed to do the double rename as an atomic op.
+            // However, primary documentation is incomplete and while extra commentary
+            // does confirm that the operation should be atomic this only applies
+            // for local NTFS filesystems with all files on the same filesystem.
+
+            // Neverthless, this will be a fast operation; so there is that.
+
+            // (4)
+            // Level Properties etc.
+            // After the above rename the properties are inconsistent with the
+            // level file. We should write them out as soon as possible.
+            // This is before creation of the new .backup file so there should be more
+            // than enough free space.
+
+            // (5)
+            // Create a backup file, out of space here is mostly ok, but should error anyway.
+            // On error the next call of this function will likely fail too as the space occupied
+            // by this file is what's used to initially write out a new save.
+
             IMapExporter.Formats[0].Write(path + ".backup", this);
-            File.Copy(path + ".backup", path);
+            string prevPath = Paths.PrevMapFile(name);
+            if (File.Exists(prevPath)) File.Delete(prevPath);
+            if (!File.Exists(path))
+                File.Move(path + ".backup", path);
+            else
+                File.Replace(path + ".backup", path, prevPath);
             SaveSettings();
+            File.Copy(path, path + ".backup");
 
             Logger.Log(LogType.SystemActivity, "SAVED: Level \"{0}\". ({1}/{2}/{3})",
                        name, players.Count, PlayerInfo.Online.Count, Server.Config.MaxPlayers);
