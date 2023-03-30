@@ -153,23 +153,14 @@ namespace MCGalaxy
                           "A game may currently be running on it.");
                 return false;
             }
-            
-            p.Message("Created backup.");
-            if (!Directory.Exists("levels/deleted"))
-                Directory.CreateDirectory("levels/deleted");
-            
-            if (File.Exists(Paths.DeletedMapFile(map))) {
-                int num = 0;
-                while (File.Exists(Paths.DeletedMapFile(map + num))) num++;
 
-                File.Move(LevelInfo.MapPath(map), Paths.DeletedMapFile(map + num));
-            } else {
-                File.Move(LevelInfo.MapPath(map), Paths.DeletedMapFile(map));
-            }
+            string backup = LevelInfo.NextBackup(map);
+            Backup(map, backup);
 
             DoAll(map, "", action_delete);
             DeleteDatabaseTables(map);
             BlockDBFile.DeleteBackingFile(map);
+            File.Delete(LevelInfo.MapPath(map));
             OnLevelDeletedEvent.Call(map);
             return true;
         }
