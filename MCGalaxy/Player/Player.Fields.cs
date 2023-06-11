@@ -211,7 +211,8 @@ namespace MCGalaxy {
 
         public Level level;
         public bool Loading = true; //True if player is loading a map.
-        internal int UsingGoto, GeneratingMap, LoadingMuseum;
+        internal int UsingGoto = 0, GeneratingMap = 0, LoadingMuseum = 0;
+        public DateTime GotoCooldown;
         public Vec3U16 lastClick = Vec3U16.Zero;
         
         public Position PreTeleportPos;

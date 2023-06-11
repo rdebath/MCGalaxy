@@ -29,6 +29,9 @@ namespace MCGalaxy
         public static bool ChangeMap(Player p, Level lvl)   { return ChangeMap(p, lvl, null); }
         
         static bool ChangeMap(Player p, Level lvl, string name) {
+            if (DateTime.UtcNow < p.GotoCooldown) {
+                p.Message("Cannot use /goto, too recently joined map."); return false;
+            }
             if (Interlocked.CompareExchange(ref p.UsingGoto, 1, 0) == 1) {
                 p.Message("Cannot use /goto, already joining a map."); return false;
             }
@@ -43,6 +46,7 @@ namespace MCGalaxy
             }
             
             if (!didJoin) return false;
+            p.GotoCooldown = DateTime.UtcNow.AddSeconds(1);
             oldLevel.AutoUnload();
             return true;
         }
