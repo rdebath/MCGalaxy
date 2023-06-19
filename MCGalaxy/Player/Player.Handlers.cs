@@ -83,9 +83,12 @@ namespace MCGalaxy
                 RevertBlock(x, y, z); return;
             }
             
-            if (!deletingBlock) {
+            {
+                // Find the physics bit flag on both place and delete to allow
+                // the bitmap to be repaired. But only check the Wait flag for
+                // places.
                 PhysicsArgs args = level.foundInfo(x, y, z);
-                if (args.HasWait) return;
+                if (!deletingBlock && args.HasWait) return;
             }
 
             if (Rank == LevelPermission.Banned) return;

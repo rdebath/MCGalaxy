@@ -131,6 +131,8 @@ namespace MCGalaxy {
                 if (C.Index != index) continue;
                 return C.data;
             }
+            // Hmmm, it's set, but there's nothing there
+            listCheckExists.Set(x, y, z, false);
             return default(PhysicsArgs);
         }
 
