@@ -283,7 +283,7 @@ namespace MCGalaxy {
                 }
                 
                 if ((byte)block != block)
-                    data.Data = Block.CoalOre;
+                    data.Data = Block.TNT_Nuke;
                 else
                     data.Data = (byte)block;
                 Update update; update.Index = index; update.data = data;
