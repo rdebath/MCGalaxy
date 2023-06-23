@@ -130,7 +130,9 @@ namespace MCGalaxy.Tasks {
             
             foreach (Level lvl in levels) {
                 try {
-                    if (!lvl.Changed || !lvl.SaveChanges) continue;
+                    if (!lvl.SaveChanges) continue;
+                    if ((count != 0 || !lvl.ChangedSinceBackup) && !lvl.Changed)
+                        continue;
 
                     lvl.Save();
                     if (count == 0)  {

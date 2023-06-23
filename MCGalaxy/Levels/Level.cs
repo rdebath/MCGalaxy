@@ -301,7 +301,9 @@ namespace MCGalaxy
             if (ChangedSinceBackup || force) {
                 if (backup.Length == 0) backup = LevelInfo.NextBackup(name);
 
+                ChangedSinceBackup = false;
                 if (!LevelActions.Backup(name, backup)) {
+                    ChangedSinceBackup = true;
                     Logger.Log(LogType.Warning, "FAILED TO INCREMENTAL BACKUP :" + name);
                     return null;
                 }
