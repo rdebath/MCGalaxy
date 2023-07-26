@@ -306,12 +306,13 @@ namespace MCGalaxy {
             int j = 0, count = ListCheck.Count;
             ushort x, y, z;
             
+            listCheckExists.Clear();
             for (int i = 0; i < count; i++) {
+                IntToPos(items[i].Index, out x, out y, out z);
                 if (items[i].data.Data == PhysicsArgs.RemoveFromChecks) {
-                    IntToPos(items[i].Index, out x, out y, out z);
-                    listCheckExists.Set(x, y, z, false);
                     continue;
                 }
+                listCheckExists.Set(x, y, z, true);
                 items[j] = items[i]; j++;
             }
             ListCheck.Items = items;
