@@ -259,8 +259,8 @@ namespace MCGalaxy
         [ConfigBool("WorldChat", "General", true)]
         public bool ServerWideChat = true;
 
-        [ConfigBool("UseBlockDB", "Other", true)]
-        public bool UseBlockDB = true;
+        [ConfigBool("UseBlockDB", "Other", false)]
+        public bool UseBlockDB = false;
         [ConfigInt("LoadDelay", "Other", 0, 0, 2000)]
         public int LoadDelay = 0;
 
